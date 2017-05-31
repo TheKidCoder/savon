@@ -68,8 +68,8 @@ module Savon
       # if there are attachments for the request, we should build a multipart message according to
       # https://www.w3.org/TR/SOAP-attachments
       if @locals[:attachments]
-        message = Mail.new
-        xml_part = Mail::Part.new do
+        message = ::Mail.new
+        xml_part = ::Mail::Part.new do
           content_type 'text/xml'
           body xml
           # in Content-Type the start parameter is recommended (RFC 2387)

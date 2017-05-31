@@ -1,10 +1,12 @@
 require "nori"
 require "savon/soap_fault"
 require "savon/http_error"
+require "mail"
+require "mail/patterns"
 
 module Savon
   class Response
-    include Mail::Patterns
+    include ::Mail::Patterns
 
     def initialize(http, globals, locals)
       @http    = http
@@ -100,7 +102,7 @@ module Savon
 
     def boundary
       return unless multipart?
-      Mail::Field.new('content-type', http.headers['content-type']).parameters['boundary']
+      ::Mail::Field.new('content-type', http.headers['content-type']).parameters['boundary']
     end
 
     def parse_body
@@ -108,7 +110,7 @@ module Savon
       parts = http.body.split(/(?:\A|\r\n)--#{Regexp.escape(boundary)}(?=(?:--)?\s*$)/)
       parts[1..-1].to_a.each_with_index do |part, index|
         header_part, body_part = part.lstrip.split(/#{CRLF}#{CRLF}|#{CRLF}#{WSP}*#{CRLF}(?!#{WSP})/m, 2)
-        section = Mail::Part.new(
+        section = ::Mail::Part.new(
           body: body_part
         )
         section.header = header_part
